@@ -1,0 +1,7 @@
+target
+*.class
+.DS_Store
+*.jar
+*.swp
+.idea/
+.idea_modules/
