@@ -21,6 +21,13 @@ scalacOptions ++= (
   Nil
 )
 
+scalacOptions ++= (
+  if(scalaVersion.value.startsWith("2.10"))
+    Nil
+  else
+    Seq("-Ywarn-unused", "-Ywarn-unused-import")
+)
+
 libraryDependencies ++= (
   ("org.scalaz" %% "scalaz-core" % "7.1.0-M7") ::
   ("org.twitter4j" % "twitter4j-core" % "4.0.1") ::
