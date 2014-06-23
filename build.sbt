@@ -1,5 +1,7 @@
 scalaVersion := "2.11.1"
 
+addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0-M1" cross CrossVersion.full)
+
 crossScalaVersions := scalaVersion.value :: "2.10.4" :: Nil
 
 name := "twitterz"
@@ -62,3 +64,6 @@ scalacOptions in (Compile, doc) ++= {
   )
 }
 
+lazy val twitterz = project.in(file(".")).dependsOn(
+  ProjectRef(uri("git://github.com/xuwei-k/macro-annotation-sample.git#47896fc1c086bf57be9fc"), "macros")
+)
