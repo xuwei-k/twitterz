@@ -30,7 +30,7 @@ scalacOptions ++= (
 
 libraryDependencies ++= (
   ("org.scalaz" %% "scalaz-core" % "7.1.0-M7") ::
-  ("org.twitter4j" % "twitter4j-core" % "4.0.1") ::
+  ("org.twitter4j" % "twitter4j-core" % "4.0.2") ::
   Nil
 )
 
