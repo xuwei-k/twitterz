@@ -1,4 +1,4 @@
-scalaVersion := "2.11.1"
+scalaVersion := "2.11.2"
 
 crossScalaVersions := scalaVersion.value :: "2.10.4" :: Nil
 
@@ -29,7 +29,7 @@ scalacOptions ++= (
 )
 
 libraryDependencies ++= (
-  ("org.scalaz" %% "scalaz-core" % "7.1.0-M7") ::
+  ("org.scalaz" %% "scalaz-core" % "7.1.0-RC2") ::
   ("org.twitter4j" % "twitter4j-core" % "4.0.2") ::
   Nil
 )
