@@ -4,9 +4,9 @@ Purely functional twitter api client
 
 
 ```scala
-libraryDependencies += "com.github.xuwei-k" %% "twitterz" % "0.1.0"
+libraryDependencies += "com.github.xuwei-k" %% "twitterz" % "0.1.1"
 ```
 
-- [API Documentation](https://oss.sonatype.org/service/local/repositories/releases/archive/com/github/xuwei-k/twitterz_2.11/0.1.0/twitterz_2.11-0.1.0-javadoc.jar/!/index.html)
+- [API Documentation](https://oss.sonatype.org/service/local/repositories/releases/archive/com/github/xuwei-k/twitterz_2.11/0.1.1/twitterz_2.11-0.1.1-javadoc.jar/!/index.html)
 
 
