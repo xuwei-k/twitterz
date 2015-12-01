@@ -23,11 +23,18 @@ scalacOptions ++= (
   Nil
 )
 
-scalacOptions ++= (
-  if(scalaVersion.value.startsWith("2.10"))
-    Nil
-  else
-    Seq("-Ywarn-unused", "-Ywarn-unused-import")
+val unusedWarnings = (
+  "-Ywarn-unused" ::
+  "-Ywarn-unused-import" ::
+  Nil
+)
+
+scalacOptions ++= PartialFunction.condOpt(CrossVersion.partialVersion(scalaVersion.value)){
+  case Some((2, v)) if v >= 11 => unusedWarnings
+}.toList.flatten
+
+Seq(Compile, Test).flatMap(c =>
+  scalacOptions in (c, console) ~= {_.filterNot(unusedWarnings.toSet)}
 )
 
 libraryDependencies ++= (
