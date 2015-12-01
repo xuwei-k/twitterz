@@ -38,7 +38,7 @@ Seq(Compile, Test).flatMap(c =>
 )
 
 libraryDependencies ++= (
-  ("org.scalaz" %% "scalaz-core" % "7.1.5") ::
+  ("org.scalaz" %% "scalaz-core" % "7.2.0") ::
   ("org.twitter4j" % "twitter4j-core" % "4.0.2") ::
   Nil
 )

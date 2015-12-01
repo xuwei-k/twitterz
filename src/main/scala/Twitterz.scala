@@ -1,6 +1,5 @@
 package twitterz
 
-import scalaz.Free.FreeC
 import scalaz.{Monad, Free, Inject}
 import scalaz.std.function._
 import twitter4j._
@@ -11,124 +10,124 @@ object Twitterz extends Twitterz[Command] {
     new Twitterz[F]
 
 
-  def runTwitterz[M[_]: Monad, A](sa: FreeC[Command, A])(interpreter: InterpreterF[M]): M[A] =
-    Free.runFC(sa)(interpreter)
+  def runTwitterz[M[_]: Monad, A](sa: Free[Command, A])(interpreter: InterpreterF[M]): M[A] =
+    sa.foldMap(interpreter)
 
-  def run[A](sa: FreeC[Command, A]): Twitter => A =
+  def run[A](sa: Free[Command, A]): Twitter => A =
     runTwitterz[({type l[a] = Twitter => a})#l, A](sa)(Twitter4jInterpreter)
 
-  def eitherT[A](sa: FreeC[Command, A]): EitherTInterpreter[A] =
+  def eitherT[A](sa: Free[Command, A]): EitherTInterpreter[A] =
     runTwitterz[EitherTInterpreter, A](sa)(Twitter4jInterpreterEither)(eitherTInterpreter)
 }
 
 class Twitterz[F[_]](implicit I: Inject[Command, F]) {
 
-  private[this] type FreeCF[A] = FreeC[F, A]
+  private[this] type FreeF[A] = Free[F, A]
 
-  private[this] def lift[A](f: Command[A]): FreeCF[A] =
-    Free.liftFC(I.inj(f))
+  private[this] def lift[A](f: Command[A]): FreeF[A] =
+    Free.liftF(I.inj(f))
 
   import Command._
 
-  def anyCommand[A](function: Twitter => A): FreeCF[A] =
+  def anyCommand[A](function: Twitter => A): FreeF[A] =
     lift(AnyCommand(function))
 
-  def search(query: Query): FreeCF[QueryResult] =
+  def search(query: Query): FreeF[QueryResult] =
     lift(Search(query))
-  val getSavedSearches: FreeCF[ResponseList[SavedSearch]] =
+  val getSavedSearches: FreeF[ResponseList[SavedSearch]] =
     lift(GetSavedSearches)
 
   def updateFriendshipById(
     userId: Long, enableDeviceNotification: Boolean, retweets: Boolean
-  ): FreeCF[Relationship] =
+  ): FreeF[Relationship] =
     lift(UpdateFriendshipById(userId, enableDeviceNotification, retweets))
 
   def updateFriendshipByScreenName(
     name: String, enableDeviceNotification: Boolean, retweets: Boolean
-  ): FreeCF[Relationship] =
+  ): FreeF[Relationship] =
     lift(UpdateFriendshipByScreenName(
       name, enableDeviceNotification, retweets
     ))
 
-  def reportSpanById(id: Long): FreeCF[User] =
+  def reportSpanById(id: Long): FreeF[User] =
     lift(ReportSpanById(id))
-  def reportSpanByScreenName(name: String): FreeCF[User] =
+  def reportSpanByScreenName(name: String): FreeF[User] =
     lift(ReportSpanByScreenName(name))
 
-  def createBlockById(id: Long): FreeCF[User] =
+  def createBlockById(id: Long): FreeF[User] =
     lift(CreateBlockById(id))
-  def createBlockByScreenName(name: String): FreeCF[User] =
+  def createBlockByScreenName(name: String): FreeF[User] =
     lift(CreateBlockByScreenName(name))
-  def destroyBlockById(id: Long): FreeCF[User] =
+  def destroyBlockById(id: Long): FreeF[User] =
     lift(DestroyBlockById(id))
-  def destroyBlockByScreenName(name: String): FreeCF[User] =
+  def destroyBlockByScreenName(name: String): FreeF[User] =
     lift(DestroyBlockByScreenName(name))
-  val getBlockIds: FreeCF[IDs] =
+  val getBlockIds: FreeF[IDs] =
     lift(GetBlockIds)
 
-  def updateStatus(tweet: String): FreeCF[Status] =
+  def updateStatus(tweet: String): FreeF[Status] =
     lift(UpdateStatus(tweet))
-  def retweetStatus(id: Long): FreeCF[Status] =
+  def retweetStatus(id: Long): FreeF[Status] =
     lift(RetweetStatus(id))
-  def getRetweets(id: Long): FreeCF[ResponseList[Status]] =
+  def getRetweets(id: Long): FreeF[ResponseList[Status]] =
     lift(GetRetweets(id))
-  val getRetweetsOfMe: FreeCF[ResponseList[Status]] =
+  val getRetweetsOfMe: FreeF[ResponseList[Status]] =
     lift(GetRetweetsOfMe)
 
-  val getHomeTimeline: FreeCF[ResponseList[Status]] =
+  val getHomeTimeline: FreeF[ResponseList[Status]] =
     lift(GetHomeTimeline)
-  val getMentionsTimeline: FreeCF[ResponseList[Status]] =
+  val getMentionsTimeline: FreeF[ResponseList[Status]] =
     lift(GetMentionsTimeline)
-  val getUserTimeline: FreeCF[ResponseList[Status]] =
+  val getUserTimeline: FreeF[ResponseList[Status]] =
     lift(GetUserTimeline)
 
-  val getDirectMessages: FreeCF[ResponseList[DirectMessage]] =
+  val getDirectMessages: FreeF[ResponseList[DirectMessage]] =
     lift(GetDirectMessages)
-  val getSentDirectMessages: FreeCF[ResponseList[DirectMessage]] =
+  val getSentDirectMessages: FreeF[ResponseList[DirectMessage]] =
     lift(GetSentDirectMessages)
 
-  val getFavorites: FreeCF[ResponseList[Status]] =
+  val getFavorites: FreeF[ResponseList[Status]] =
     lift(GetFavorites)
-  def getFavoritesById(id: Long): FreeCF[ResponseList[Status]] =
+  def getFavoritesById(id: Long): FreeF[ResponseList[Status]] =
     lift(GetFavoritesById(id))
-  def getFavoritesByScreenName(name: String): FreeCF[ResponseList[Status]] =
+  def getFavoritesByScreenName(name: String): FreeF[ResponseList[Status]] =
     lift(GetFavoritesByScreenName(name))
-  def createFavorite(id: Long): FreeCF[Status] =
+  def createFavorite(id: Long): FreeF[Status] =
     lift(CreateFavorite(id))
 
-  def getUserListsById(id: Long): FreeCF[ResponseList[UserList]] =
+  def getUserListsById(id: Long): FreeF[ResponseList[UserList]] =
     lift(GetUserListsById(id))
-  def getUserListsByScreenName(name: String): FreeCF[ResponseList[UserList]] =
+  def getUserListsByScreenName(name: String): FreeF[ResponseList[UserList]] =
     lift(GetUserListsByScreenName(name))
 
-  def createUserListSubscriptionByListId(listId: Long): FreeCF[UserList] =
+  def createUserListSubscriptionByListId(listId: Long): FreeF[UserList] =
     lift(CreateUserListSubscriptionByListId(listId))
-  def createUserListSubscriptionByOwnerId(ownerId: Long, slug: String): FreeCF[UserList] =
+  def createUserListSubscriptionByOwnerId(ownerId: Long, slug: String): FreeF[UserList] =
     lift(CreateUserListSubscriptionByOwnerId(ownerId, slug))
-  def createUserListSubscriptionByScreenName(name: String, slug: String): FreeCF[UserList] =
+  def createUserListSubscriptionByScreenName(name: String, slug: String): FreeF[UserList] =
     lift(CreateUserListSubscriptionByScreenName(name, slug))
 
-  val getAvailableTrends: FreeCF[ResponseList[Location]] =
+  val getAvailableTrends: FreeF[ResponseList[Location]] =
     lift(GetAvailableTrends)
-  def getPlaceTriends(id: Int): FreeCF[Trends] =
+  def getPlaceTriends(id: Int): FreeF[Trends] =
     lift(GetPlaceTriends(id))
 
   def updateProfile(
     name: String, url: String, location: String, description: String
-  ): FreeCF[User] =
+  ): FreeF[User] =
     lift(UpdateProfile(name, url, location, description))
 
-  def updateProfileImage(file: File): FreeCF[User] =
+  def updateProfileImage(file: File): FreeF[User] =
     lift(UpdateProfileImage(file))
-  def updateProfileImageByStream(stream: InputStream): FreeCF[User] =
+  def updateProfileImageByStream(stream: InputStream): FreeF[User] =
     lift(UpdateProfileImageByStream(stream))
-  def updateProfileBanner(file: File): FreeCF[Unit] =
+  def updateProfileBanner(file: File): FreeF[Unit] =
     lift(UpdateProfileBanner(file))
-  def updateProfileBannerByStream(stream: InputStream): FreeCF[Unit] =
+  def updateProfileBannerByStream(stream: InputStream): FreeF[Unit] =
     lift(UpdateProfileBannerByStream(stream))
-  def updateProfileBackground(file: File, tile: Boolean): FreeCF[User] =
+  def updateProfileBackground(file: File, tile: Boolean): FreeF[User] =
     lift(UpdateProfileBackground(file, tile))
-  def updateProfileBackgroundByStream(stream: InputStream, tile: Boolean): FreeCF[User] =
+  def updateProfileBackgroundByStream(stream: InputStream, tile: Boolean): FreeF[User] =
     lift(UpdateProfileBackgroundByStream(stream, tile))
   def updateProfileColors(
     profileBackgroundColor: String,
@@ -136,7 +135,7 @@ class Twitterz[F[_]](implicit I: Inject[Command, F]) {
     profileLinkColor: String,
     profileSidebarFillColor: String,
     profileSidebarBorderColor: String
-  ): FreeCF[User] =
+  ): FreeF[User] =
     lift(UpdateProfileColors(
       profileBackgroundColor,
       profileTextColor,
@@ -152,7 +151,7 @@ class Twitterz[F[_]](implicit I: Inject[Command, F]) {
     endSleepTime: String,
     timeZone: String,
     lang: String
-  ): FreeCF[AccountSettings] =
+  ): FreeF[AccountSettings] =
     lift(UpdateAccountSettings(
       trendLocationWoeid,
       sleepTimeEnabled,
@@ -162,7 +161,7 @@ class Twitterz[F[_]](implicit I: Inject[Command, F]) {
       lang
     ))
 
-  val getRateLimitStatus: FreeCF[Map[String, RateLimitStatus]] =
+  val getRateLimitStatus: FreeF[Map[String, RateLimitStatus]] =
     lift(GetRateLimitStatus)
 }
 
