@@ -3,8 +3,6 @@ import ReleaseStateTransformations._
 import com.typesafe.sbt.pgp.PgpKeys
 import xerial.sbt.Sonatype
 
-releaseSettings
-
 xerial.sbt.Sonatype.sonatypeRootSettings
 
 val sonatypeURL =
@@ -44,7 +42,7 @@ def releaseStepCross[A](key: TaskKey[A]) = ReleaseStep(
   enableCrossBuild = true
 )
 
-ReleaseKeys.releaseProcess := Seq[ReleaseStep](
+releaseProcess := Seq[ReleaseStep](
   checkSnapshotDependencies,
   inquireVersions,
   runClean,
