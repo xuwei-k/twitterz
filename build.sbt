@@ -64,3 +64,5 @@ scalacOptions in (Compile, doc) ++= {
   )
 }
 
+// https://github.com/sbt/sbt/issues/2217
+fullResolvers ~= {_.filterNot(_.name == "jcenter")}
