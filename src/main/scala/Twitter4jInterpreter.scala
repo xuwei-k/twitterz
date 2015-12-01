@@ -3,7 +3,7 @@ package twitterz
 import twitter4j.{TwitterException, Twitter}
 import twitterz.Command._
 import scala.collection.convert.decorateAsScala._
-import scalaz.{EitherT, -\/, \/-, \/}
+import scalaz.{EitherT, -\/, \/-}
 
 object Twitter4jInterpreterEither extends InterpreterF[EitherTInterpreter] {
   override def apply[A](command: Command[A]) =

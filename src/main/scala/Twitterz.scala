@@ -1,7 +1,7 @@
 package twitterz
 
 import scalaz.Free.FreeC
-import scalaz.{\/, Monad, Free, Inject}
+import scalaz.{Monad, Free, Inject}
 import scalaz.std.function._
 import twitter4j._
 import java.io.{File, InputStream}
