@@ -12,7 +12,7 @@ object Twitterz extends Twitterz[Command] {
 
 
   def runTwitterz[M[_]: Monad, A](sa: FreeC[Command, A])(interpreter: InterpreterF[M]): M[A] =
-    runFC(sa)(interpreter)
+    Free.runFC(sa)(interpreter)
 
   def run[A](sa: FreeC[Command, A]): Twitter => A =
     runTwitterz[({type l[a] = Twitter => a})#l, A](sa)(Twitter4jInterpreter)
